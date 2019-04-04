@@ -11,4 +11,86 @@
 // "white" in every pixel;
 // the screen should remain fully clear as long as no key is pressed.
 
-// Put your code here.
+
+
+@8192
+D=A-1
+@SCREEN_END
+M=D
+
+(LOOP)
+    @KBD
+    D=M 
+
+    @CLEAR              // if (KBD == 0) goto clear
+    D;JEQ
+
+    @FILL               // if (KBD != 0) goto fill
+    D;JNE
+
+    @END
+    0;JMP
+
+
+(END)
+    @END
+    0;JMP
+
+(FILL)
+    @SCREEN             // Reset screenAddr
+    D=A
+    @screenAddr
+    M=D
+
+    @SCREEN_END         // i = SCREEN_END
+    D=M 
+    @i
+    M=D
+    (FILL_LOOP)
+        @i              // if (i < 0)
+        D=M
+        @LOOP
+        D;JLT
+
+        @screenAddr     // fill current screen address
+        A=M
+        M=-1
+
+        @screenAddr     // screenAddr++
+        M=M+1           
+
+        @i              // i--
+        M=M-1
+
+        @FILL_LOOP
+        0;JMP
+
+
+(CLEAR)
+    @SCREEN             // Reset screenAddr
+    D=A
+    @screenAddr
+    M=D
+
+    @SCREEN_END         // i = SCREEN_END
+    D=M 
+    @i
+    M=D
+    (CLEAR_LOOP)
+        @i              // if (i < 0)
+        D=M
+        @LOOP
+        D;JLT
+
+        @screenAddr     // clear current screen address
+        A=M
+        M=0
+
+        @screenAddr     // screenAddr++
+        M=M+1           
+
+        @i              // i--
+        M=M-1
+
+        @CLEAR_LOOP
+        0;JMP
