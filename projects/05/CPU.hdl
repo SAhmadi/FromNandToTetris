@@ -39,5 +39,59 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    
+    // Instruction Type
+    And(a=instruction[15], b=true, out=instrC);
+    Xor(a=instruction[15], b=true, out=instrA);
+    
+    // Destination
+    And(a=instruction[5], b=instrC, out=destA);
+    And(a=instruction[4], b=instrC, out=destD);
+    And(a=instruction[3], b=instrC, out=destM);
+
+    // ALU Flags
+    Or(a=instruction[11], b=false, out=zx);
+    Or(a=instruction[10], b=false, out=nx);
+    Or(a=instruction[9], b=false, out=zy);
+    Or(a=instruction[8], b=false, out=ny);
+    Or(a=instruction[7], b=false, out=f);
+    Or(a=instruction[6], b=false, out=no);
+
+    // Jump Flags
+    Not(in=true, out=noJmp);    // No JMP
+    Not(in=false, out=jmp);     // JMP
+
+    And(a=ng, b=true, out=jlt); // JLT <
+    Not(in=jle, out=jgt);       // JGT >
+
+    And(a=zr, b=true, out=jeq); // JEQ ==
+    Not(in=zr, out=jne);        // JNE !=
+    
+    Or(a=jgt, b=jeq, out=jge);  // JGE >=
+    Or(a=jlt, b=jeq, out=jle);  // JLE <=
+
+
+    // Store into Register A and output address
+    Mux16(a=AluOutForRegA, b=instruction, sel=instrA, out=instrOut);
+    Or(a=destA, b=instrA, out=loadA);
+    ARegister(in=instrOut, load=loadA, out[0..14]=addressM , out=regAOut);
+
+    // Store into Register D 
+    DRegister(in=AluOutForRegD, load=destD, out=aluIn1);
+
+    // Store into Memory
+    And(a=destM, b=instrC, out=writeM);
+
+    // ALU Input from DataIn or RegisterA
+    Mux16(a=regAOut, b=inM, sel=instruction[12], out=aluIn2);
+
+    // ALU
+    ALU(x=aluIn1, y=aluIn2, zx=zx, nx=nx, zy=zy, ny=ny, f=f, no=no, zr=zr, ng=ng, out=outAlu, out=AluOutForRegA, out=AluOutForRegD);
+    Or16(a=outAlu, b=false, out=outM);
+
+    // PC
+    Mux8Way16(a[0]=noJmp, b[0]=jgt, c[0]=jeq, d[0]=jge, e[0]=jlt, f[0]=jne, g[0]=jle, h[0]=jmp, sel=instruction[0..2], out[0]=checkIfJmp);
+    
+    And(a=checkIfJmp, b=instrC, out=isJumping);
+    PC(in=regAOut, load=isJumping, inc=true, reset=reset, out[0..14]=pc);
 }
