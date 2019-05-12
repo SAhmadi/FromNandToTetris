@@ -10,7 +10,7 @@ package vmtranslator;
 public class VMTranslator {
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("[Error] Execute: java HackAssembler filename.asm");
+            System.out.println("[Error] Execute: java VMTranslator filename.vm");
             System.exit(-1);
         }
         
