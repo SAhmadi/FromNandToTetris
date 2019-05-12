@@ -16,7 +16,8 @@ import vmtranslator.Token.OpType;
  * @version 1.0
  */
 public class Parser {
-    private String filename;
+    private String fileName;
+    private String filePath;
     private List<Map<String, String>> commands;
 
 
@@ -25,8 +26,9 @@ public class Parser {
      * 
      * @param filename Input filename without extension
      */
-    public Parser(String filename) {
-        this.filename = filename;
+    public Parser(String fileName, String filePath) {
+        this.fileName = fileName;
+        this.filePath = filePath;
         this.commands = new ArrayList<Map<String, String>>();
     }
 
@@ -36,7 +38,7 @@ public class Parser {
      * and store commands into list
      */
     public void parse() {
-        String inputFilename = filename + ".vm";
+        String inputFilename = filePath + fileName + ".vm";
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(inputFilename))) {
             String line = bufferedReader.readLine().strip();
@@ -121,8 +123,11 @@ public class Parser {
 
 
     /* GETTER AND SETTERS */
-    public String getFilename() { return filename;}
-    public void setFilename(String value) { filename = value; }
+    public String getFilename() { return fileName;}
+    public void setFilename(String value) { fileName = value; }
+
+    public String getFilePath() { return filePath; }
+    public void setFilePath(String value) { filePath = value; }
 
     public List<Map<String, String>> getCommands() { return commands; } 
     public void setCommands(List<Map<String, String>> value) { commands = value; }

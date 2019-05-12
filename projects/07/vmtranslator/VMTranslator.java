@@ -1,5 +1,8 @@
 package vmtranslator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * VMTranslator
  * Translates VM-Instructions into Hack-Assembly
@@ -15,19 +18,48 @@ public class VMTranslator {
         }
         
         // Remove file-extension
-        String inputFilename = args[0];
-        int lastDotIndex = inputFilename.lastIndexOf(".");
-        inputFilename = inputFilename.substring(0, lastDotIndex);
+        String inputFilePathWithName = args[0];
+        int lastDotIndex = inputFilePathWithName.lastIndexOf(".");
+        inputFilePathWithName = inputFilePathWithName.substring(0, lastDotIndex);
+
+        // Remove leading file-path
+        Map<String, String> fileComponents = getFileComponents(inputFilePathWithName);
 
         // Create a parser and parse through file
-        Parser parser = new Parser(inputFilename);
+        Parser parser = new Parser(fileComponents.get("name"), fileComponents.get("path"));
         parser.parse();
 
         // Create a codeWriter and translate commands
         // then write to file
-        String outputFilename = inputFilename;
-        CodeWriter codeWriter = new CodeWriter(outputFilename);
+        CodeWriter codeWriter = new CodeWriter(fileComponents.get("name"), fileComponents.get("path"));
         codeWriter.translate(parser.getCommands());
         codeWriter.writeToFile();
+    }
+
+
+    /**
+     * Get the file-name and file-path of the .vm file to translate
+     * @param filepathWithName Total file-path with file-name
+     * @return File-Components of the .vm file (e.g. name and path)
+     */
+    private static Map<String, String> getFileComponents(String filepathWithName) {
+        Map<String, String> components = new HashMap<>();
+        
+        // Seperate into leading file-path and only file-name
+        int lastIndexOfSlash = filepathWithName.lastIndexOf("/"); 
+        if (lastIndexOfSlash > -1) {
+            components.put(
+                "name", filepathWithName.substring(lastIndexOfSlash + 1, filepathWithName.length())
+            );
+            components.put(
+                "path", filepathWithName.substring(0, lastIndexOfSlash + 1)
+            );
+        }
+        else {
+            components.put("name", filepathWithName);
+            components.put("path", "./");
+        }
+
+        return components;
     }
 }

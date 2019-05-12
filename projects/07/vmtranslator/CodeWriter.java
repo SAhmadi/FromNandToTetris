@@ -17,7 +17,8 @@ import vmtranslator.Token.OpType;
  * @version 1.0
  */
 public class CodeWriter {
-    private String filename;
+    private String fileName;
+    private String filePath;
     private int comparisonCount;
     List<String> translatedCommands;
 
@@ -26,8 +27,9 @@ public class CodeWriter {
      * 
      * @param filename Output filename without extension
      */
-    public CodeWriter(String filename) {
-        this.filename = filename;
+    public CodeWriter(String fileName, String filePath) {
+        this.fileName = fileName;
+        this.filePath = filePath;
         this.comparisonCount = 0;
         this.translatedCommands = new ArrayList<>();
     }
@@ -79,7 +81,7 @@ public class CodeWriter {
      */
     private void resolveAddress(String segment, int index) {
         if (segment.equals("constant")) translatedCommands.add("@" + index);
-        else if (segment.equals("static")) translatedCommands.add("@" + filename + "." + index);
+        else if (segment.equals("static")) translatedCommands.add("@" + fileName + "." + index);
         else if (segment.equals("pointer")) translatedCommands.add("@R" + (Token.POINTER_BASE+index));
         else if (segment.equals("temp")) translatedCommands.add("@R" + (Token.TEMP_BASE+index));
         else if (
@@ -250,7 +252,7 @@ public class CodeWriter {
      */
     public void writeToFile() {
         // Set .asm file-extension
-        String outputFilename = filename + ".asm";
+        String outputFilename = filePath + fileName + ".asm";
 
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(outputFilename))) {
             for (String command : translatedCommands) {
@@ -263,8 +265,11 @@ public class CodeWriter {
 
 
     /* GETTERS AND SETTERS */
-    public String getFilename() { return filename; }
-    public void setFilename(String value) { filename = value; }
+    public String getFilename() { return fileName; }
+    public void setFilename(String value) { fileName = value; }
+
+    public String getFilePath() { return filePath; }
+    public void setFilePath(String value) { filePath = value; }
 
     public int getComparisonCount() { return comparisonCount; }
     public void setComparisonCount(int value) { comparisonCount = value; }
