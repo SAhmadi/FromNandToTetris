@@ -37,7 +37,7 @@ public class Compiler {
 	
 	/**
 	 * Get file-paths of all the .jack files inside the directory
-	 * or the file-path of the one .jack file if [inputArgument] is a file-path
+	 * or the file-path of the one .jack file if {@code inputArgument} is a file-path
 	 * 
 	 * @param inputArgument The file-path of the .jack file or directory
 	 * @return Array of the file-paths
