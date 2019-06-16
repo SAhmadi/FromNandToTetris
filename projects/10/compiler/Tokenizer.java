@@ -2,32 +2,25 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * Tokenizes .jack lines
+ * 
+ * @author Sirat Ahmadi
+ * @version 1.0
+ */
 public class Tokenizer {
-	public static final String IDENTIFIER = "identifier";
-	public static final String INTEGER = "integerConstant";
-	public static final String KEYWORD = "keyword";
-	public static final String STRING = "stringConstant";
-	public static final String SYMBOL = "symbol";
-
-	private final List<String> KEYWORDS = Arrays.asList(
-		"class", "constructor","static", "field", "method", "function", 
-		"int", "boolean", "char", "void", "var", "let", "do", "if", "else", "while", 
-		"return", "true", "false", "null", "this"
-	);
-
-	private final List<String> SYMBOLS = Arrays.asList(
-		"{", "}", "[", "]", "(", ")", ".", ",", ";", 
-		"+", "-", "*", "/", "&", "|", "<", ">", "=", "~"
-	);
-
-	public Tokenizer() {}
-
+	
+	/**
+	 * Tokenizes lines of the given file and
+	 * stores them inside a list
+	 * 
+	 * @param filePath The file-path of the file to tokenize
+	 * @return List of all tokens
+	 */
 	public ArrayList<Token> tokenize(String filePath) {
 		ArrayList<Token> tokens = new ArrayList<>();
 
@@ -52,18 +45,21 @@ public class Tokenizer {
 			System.exit(-1);
 		}
 
-		// for (Token t : tokens) {
-		// 	System.out.println("*** type: " + t.getType() + ", value: " + t.getValue());
-		// }
-
 		return tokens;
 	}
 
 	
+	/**
+	 * Tokenize one line
+	 * 
+	 * @param line The line to tokenize
+	 * @return List of all the tokens in that one line
+	 */
 	private List<Token> tokenizeLine(String line) {
 		List<Token> tokens = new ArrayList<>();
 
-		if (line.equals("")) return null;
+		if (line.equals("")) 
+			return null;
 		if (line.startsWith("*") || line.startsWith("//") || line.startsWith("/*"))
 			return null;
 
@@ -72,15 +68,16 @@ public class Tokenizer {
 		String idPattern = "\\w+";
 		String intPattern = "\\d+";
 		String stringPattern = "\".*\"";
-		String keywordPattern = "class|constructor|static|field|method|function|" +
-														"int|boolean|char|void|var|let|do|if|else|while|return|true|false" +
-														"null|this";
+		String keywordPattern = "class|constructor|static|field|method|function|" 
+				+ "int|boolean|char|void|var|let|do|if|else|while|return|true|false" 
+				+ "null|this";
 		String symbolPattern = "\\{|\\}|\\[|\\]|\\(|\\)|\\.|,|;|\\+|-|\\*|\\/|&|\\||<|>|=|~";
 
-
-		String pattern = "(" + idPattern + "|" + intPattern + "|" + stringPattern + "|" + 
-										keywordPattern + "|" + symbolPattern + ")";
-
+		String pattern = String.format(
+			"(%s|%s|%s|%s|%s)", 
+			idPattern, intPattern, stringPattern, keywordPattern, symbolPattern
+		);
+	
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(line);
 		
@@ -90,25 +87,27 @@ public class Tokenizer {
 				tokens.add(getToken(t));
 		}
 
-		// for (Token t : tokens) {
-		// 	System.out.println("*** type: " + t.getType() + ", value: " + t.getValue());
-		// }
-
 		return tokens;
 	}
 
 
+	/**
+	 * Get the associated token for a given .jack keyword, symbol, ... 
+	 * 
+	 * @param value The .jack keyword, symbol, identifier, ...
+	 * @return The associated token
+	 */
 	private Token getToken(String value) {
-		if ( KEYWORDS.contains(value) ) 
-			return new Token(KEYWORD, value);
-		else if ( SYMBOLS.contains(value) )
-			return new Token(SYMBOL, value);
-		else if ( value.startsWith("\"") && value.endsWith("\"") )
-			return new Token(STRING, value.replace("\"", ""));
+		if (Tokens.KEYWORDS.contains(value)) 
+			return new Token(Tokens.KEYWORD_TYPE, value);
+		else if (Tokens.SYMBOLS.contains(value))
+			return new Token(Tokens.SYMBOL_TYPE, value);
+		else if (value.startsWith("\"") && value.endsWith("\""))
+			return new Token(Tokens.STRING_TYPE, value.replace("\"", ""));
 		else if ( value.matches("^\\d+$") )
-			return new Token(INTEGER, value);
+			return new Token(Tokens.INTEGER_TYPE, value);
 		else if ( value.matches("^\\w+$") )
-			return new Token(IDENTIFIER, value);
+			return new Token(Tokens.IDENTIFIER_TYPE, value);
 		else {
 			System.out.println("[Error] Unable to recognize token '"+ value + "'");
 			System.exit(-1);
@@ -116,5 +115,4 @@ public class Tokenizer {
 
 		return null;
 	}
-
 }
