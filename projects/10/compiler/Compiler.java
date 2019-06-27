@@ -29,6 +29,9 @@ public class Compiler {
 		for (String fp : filePaths) {
 			List<Token> tokens = tokenizer.tokenize(fp);
 
+			// System.out.println("*** FilePath: " + fp);
+			// System.out.println("*** tokens.len: " + tokens.size());
+
 			String xmlFilePath = fp.split(".jack")[0] + ".xml";			
 			compilationEngine.compileToFile(tokens, xmlFilePath);
 		}

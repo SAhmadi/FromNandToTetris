@@ -57,6 +57,8 @@ public class CompilationEngine {
 	 */
 	public void compileToFile(List<Token> tokens, String filePath) {
 		// Store tokens in Stack, for easier handling
+		tokenStack.clear();
+		xmlTagList.clear();
 		Collections.reverse(tokens);
 		tokenStack.addAll(tokens);
 
@@ -72,6 +74,7 @@ public class CompilationEngine {
 		// Write xml-tags to file
 		try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(filePath))) {
 			for (String l : xmlTagList) {
+				// System.out.println(filePath + ": " + l);
 				bufferedWriter.append(l);
 				bufferedWriter.append(System.lineSeparator());
 			}
