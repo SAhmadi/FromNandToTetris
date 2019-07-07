@@ -41,3 +41,120 @@ class Screen {
     function void drawCircle(int x, int y, int r) {
     }
 }
+
+// // This file is part of www.nand2tetris.org
+// // and the book "The Elements of Computing Systems"
+// // by Nisan and Schocken, MIT Press.
+// // File name: projects/12/Screen.jack
+
+// /**
+//  * A library of functions for displaying graphics on the screen.
+//  * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+//  * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+//  * the screen is indexed (0,0).
+//  */
+// class Screen {
+//     static int SCREEN_BASE_ADDR;
+//     static int SCREEN_TOP_ADDR;
+//     static int SCREEN_ADDR_SIZE;
+//     static boolean WHITE;
+//     static boolean BLACK;
+//     static Array value;
+//     static boolean isCurrentColorBlack;
+
+//     /** Initializes the Screen. */
+//     function void init() {
+//         let SCREEN_BASE_ADDR = 16384;
+//         let SCREEN_TOP_ADDR = 24576;
+//         let SCREEN_ADDR_SIZE = SCREEN_TOP_ADDR - SCREEN_BASE_ADDR;
+//         let WHITE = 0;
+//         let BLACK = 1;
+//         let value = SCREEN_BASE_ADDR;
+//         let isCurrentColorBlack = false;
+    
+//         return;
+//     }
+
+//     /** Erases the entire screen. */
+//     function void clearScreen() {
+//         var int i; 
+//         let i = 0;
+//         while (i < SCREEN_ADDR_SIZE) {
+//             let value[i] = WHITE;
+//             let i = i + 1;
+//         }
+//         return;
+//     }
+
+//     /** Sets the current color, to be used for all subsequent drawXXX commands.
+//      *  Black is represented by true, white by false. */
+//     function void setColor(boolean b) {
+//         let isCurrentColorBlack = b;
+//         return;
+//     }
+
+//     /** Draws the (x,y) pixel, using the current color. */
+//     function void drawPixel(int x, int y) {
+//         var int address;
+//         var int nthBit;
+//         var int shiftedByNBits;
+
+//         if ( (x < 0) | (x > 511) | (y < 0) | (y > 255) ) {
+//             do Sys.error(7);
+//         }
+        
+//         // Normally set nth-Bit with: (1 << nthBit) | value[address]
+//         // an unset with: value[address] & (~ (1 << nthBit))
+//         // But without bitshift operators: 
+//         // 2^nthBit | value[address] and
+//         // value[address] & (~2^nthBit)
+//         let address = (32 * y) + (x / 16);
+//         let nthBit = Screen._modulo(x, 16);
+//         let shiftedByNBits = Screen._pow(2, nthBit);
+
+//         if (isCurrentColorBlack) { 
+//             let value[address] = shiftedByNBits | value[address];
+//         }
+//         else {
+//             let value[address] = value[address] & (~shiftedByNBits);
+//         }
+//         return;
+//     }
+
+//     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+//     function void drawLine(int x1, int y1, int x2, int y2) {
+//     }
+
+//     /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+//     function void drawCircle(int x, int y, int r) {
+//     }
+
+//     /** Draws a filled rectangle whose top left corner is (x1, y1)
+//      * and bottom right corner is (x2,y2), using the current color. */
+//     function void drawRectangle(int x1, int y1, int x2, int y2) {
+//     }
+
+//     /** Returns the modulo remainder of a/b,
+//      *  copied from MathOS file, for simpler testing */
+//     function int _modulo(int a, int b) {
+//         return a - ((a/b) * b);
+//     }
+
+//     /** Returns a^b,
+//      *  copied from MathOS file, for simpler testing */
+//     function int _pow(int a, int b) {
+//         if (b < 0) {
+//             do Sys.error(101);
+//         }
+
+//         if (b = 0) { return 1; }
+//         else {
+//             if (Screen._modulo(b, 2) = 0) {
+//                 return Screen._pow(a, b/2) * Screen._pow(a, b/2);
+//             }
+//             else {
+//                 return a * Screen._pow(a, b/2) * Screen._pow(a, b/2);
+//             }
+//         }
+//     }
+// }
